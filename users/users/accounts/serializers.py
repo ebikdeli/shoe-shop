@@ -1,32 +1,3 @@
-"""
-** Unlike Models and signals that we should use 'settings.AUTH_USER_MODEL' instead of 'get_user_model' method,
-in serializers and filtersets we can't use 'AUTH_USER_MODEL' or stringized <app_name.Model_Name>' or we get
-this error:
-AttributeError: 'str' object has no attribute '_meta'
-https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#referencing-the-user-model
-
-** To have a independent app, we defined our Generic serailizer here too.
-We are following this document to define serializer for Generic serailizer:
-https://www.django-rest-framework.org/api-guide/relations/#generic-relationships
-
-** In this module AddressSerializer 'create' and 'update' methods are overrided to be able to create and update
-address using diffrent methods and update or create Address with 1- DRF standard GUI and 2- Via client-server
-architectures like React or Vue. And even we client could get address 'user' field is a nested serializer and
-gets its data from 'address' serializer.
-
-** If we need to use 'request' object for 'HyperlinkedModelSerializer', 'HyperlinkedFields' or anything else
-we must sure to send 'request' object by 'context' attribute in the Serializer. It's important to know that
-we can access to 'context' structure with 'context' attribute in Serializer. This is very useful when
-we want to use context data in methods for eg:'to represent', 'validate', 'update' and 'create'.
-For more information about extra context read below document:
-https://www.django-rest-framework.org/api-guide/serializers/#including-extra-context
-
-** We used 'Serializer Inheritance' to be able to use 'nested relations' for 'Address' in 'User' Model.
-If we want to not include a field in child serializer from parent serializer, we just need to set its value to 'None'.
-for more information read below documents:
-https://www.django-rest-framework.org/api-guide/serializers/#serializer-inheritance
-https://www.django-rest-framework.org/api-guide/relations/#nested-relationships
-"""
 # from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
@@ -55,7 +26,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = get_user_model()
         fields = [
                   'url',
-                  'username', 'password', 'email', 'name', 'is_active',
+                  'username', 'password', 'email', 'first_name', 'last_name', 'is_active',
                   'is_staff', 'is_admin', 'is_superuser',]
         extra_kwargs = {
             'password': {'write_only': True,
@@ -172,7 +143,7 @@ class UserNewSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = [
                   'url',
-                  'username', 'password', 'email', 'name', 'is_active',
+                  'username', 'password', 'email', 'first_name', 'last_name', 'is_active',
                   'is_staff', 'is_admin', 'is_superuser', 'user_address',
                   # 'some_field',
                   ]

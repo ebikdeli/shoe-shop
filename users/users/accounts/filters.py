@@ -12,7 +12,7 @@ class UserFilterSet(filters.FilterSet):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'name', 'is_active',
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_active',
                   'is_staff', 'is_admin', 'is_superuser',
                   'password']
 
