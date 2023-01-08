@@ -28,7 +28,7 @@ class UserViewSet(ModelViewSet):
     # In production we rather use 'permissions.IsAdminUser' but for dev we use 'AllowAny'
     # permission_classes = [permissions.IsAdminUser, ]
     permission_classes = [permissions.AllowAny, ]
-    authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication, ]
+    # authentication_classes = [authentication.TokenAuthentication, authentication.SessionAuthentication, ]
     filter_backends = (filters.DjangoFilterBackend, )
     filterset_class = UserFilterSet
     lookup_field = get_user_model().USERNAME_FIELD
@@ -46,8 +46,9 @@ class UserViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """Override 'list' method to send 'request' object to serializer - although it's not needed for ModelSerializer"""
-        # queryset = get_user_model().objects.all()
-        queryset = self.get_queryset()
+        queryset = get_user_model().objects.all()
+        # queryset = self.get_queryset()
+        print(queryset)
         if queryset.exists():
             serializer = UserNewSerializer(instance=queryset, many=True, context={'request': request})
             return Response(data=serializer.data, status=status.HTTP_200_OK)
