@@ -8,6 +8,7 @@ class.
 ** To change 'lookup_field' attribute. And of course we should change 'lookupfield' on 'url' field of the related serializer
 IMPORTANT: But beware if change 'lookup_field' attribute, 'tests' must be written generics to support arbitrary 'lookup_field'.
 """
+from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
@@ -19,6 +20,7 @@ from django_filters import rest_framework as filters
 from .models import Address
 from .serializers import UserSerializer, AddressSerializer, UserNewSerializer
 from .filters import UserFilterSet, AddressFilterSet
+from .forms import AddressForm
 
 
 class UserViewSet(ModelViewSet):
@@ -69,3 +71,17 @@ class AddressViewSet(ModelViewSet):
         queryset = Address.objects.all()
         serializer = AddressSerializer(instance=queryset, many=True, context={'request': request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+def address_add(request):
+    """To demonstrate how to queryset data for a form"""
+    address = request.user.address_set if request.user.is_authenticated else None
+    if request.method == 'POST':
+        address_form = AddressForm(data=request.POST, files=request.FILES, instance=address)
+        
+    else:
+        address_form = AddressForm(instance=address)
+        # If 'Address.user' field was '1t1', 'm2m' or 'ForeignKey', we could had changed queryset
+        # for the field in the model form to something like this:
+        # address_form.fields['user'].queryset = get_user_model().objects.filter(first_name__in='ehsan')
+    return render(request, 'accounts/address_add.html', {'form': address_form})

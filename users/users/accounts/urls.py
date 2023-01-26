@@ -15,5 +15,6 @@ router.register('user', views.UserViewSet, 'user')
 router.register('address', views.AddressViewSet, 'address')
 
 urlpatterns = [
+    path('address/', views.address_add, name='address_add'),
     path('', include(router.urls)),
 ]
