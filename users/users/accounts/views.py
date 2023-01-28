@@ -50,7 +50,9 @@ class UserViewSet(ModelViewSet):
         """Override 'list' method to send 'request' object to serializer - although it's not needed for ModelSerializer"""
         queryset = get_user_model().objects.all()
         # queryset = self.get_queryset()
-        print(queryset)
+        # We can add new fields to any queryset without any problem
+        for q in queryset:
+            q.new_field = 'This is new field to send to the front'
         if queryset.exists():
             serializer = UserNewSerializer(instance=queryset, many=True, context={'request': request})
             return Response(data=serializer.data, status=status.HTTP_200_OK)
